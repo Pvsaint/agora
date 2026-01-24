@@ -23,6 +23,8 @@ pub struct EventInfo {
 pub enum DataKey {
     /// The administrator address for contract management
     Admin,
+    /// The global platform fee percentage
+    PlatformFee,
     /// Mapping of event_id to EventInfo (Persistent)
     Event(String),
     /// Mapping of organizer_address to a list of their event_ids (Persistent)
