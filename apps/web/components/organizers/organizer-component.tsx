@@ -1,7 +1,10 @@
 'use client'
 
 import group from "../../public/icons/user-group.svg"
+import left from "../../public/icons/arrow-left.svg"
+import right from "../../public/icons/arrow-right.svg"
 import Image from "next/image"
+import { useRef } from "react";
 
 type InfoCard = {
   id: string;
@@ -42,6 +45,7 @@ const cardsData: InfoCard[] = [
 ];
 
 
+
 const Button : React.FC = () => {
   return (
     <button className="bg-yellow-300 pt-2 pl-3 pr-3 pb-2 flex gap-3 border border-yellow-300 rounded-lg items-center absolute top-40 right-5 hover:cursor-pointer">
@@ -53,18 +57,29 @@ const Button : React.FC = () => {
 
 
 export function OrganizerComponent() {
+
+  const cardsRef = useRef<HTMLDivElement>(null);
+
+  const scrollLeft = () => {
+    cardsRef.current?.scrollBy({ left: -300, behavior: "smooth" });
+  };
+
+  const scrollRight = () => {
+    cardsRef.current?.scrollBy({ left: 300, behavior: "smooth" });
+  };
+
   return (
     <div className="p-10 ml-4 lg:ml-40 hidden lg:block">
         <div className="flex justify-start items-center gap-4 p-5 pb-10">
             <h1 className="font-semibold md:text-4xl">Explore organizers</h1>
-            <Image src={group} alt="User Group Icon" className="w-5 h-5 lg:w-6 h-6 font-bold" />
+            <Image src={group} alt="User Group Icon" className="w-7 h-7 font-bold mt-2" />
         </div>
-        <section className="flex justify-center items-center gap-10 overflow-x-auto scrollbar-hide pl-75 mr-50 h-65">
+        <section className="flex justify-center items-center gap-10 overflow-x-auto pl-75 mr-50 h-65" ref={cardsRef}>
               {cardsData.map((card) => (
                 <div key={card.id} className="relative h-full">
                   <section className="absolute border-10 rounded-2xl bg-yellow-400 border-yellow-400 w-102 h-58 -left-2 top-2 z-0"></section>
                   <div className="relative z-10 bg-black text-white p-5x border rounded-2xl lg:min-w-100
-                    relative h-40 lg:h-58">
+                     h-40 lg:h-58">
                     <div className="absolute top-5 left-5">
                       <Image src={card.image} alt={card.title} height={65} width={65} className="relative z-10 border-4 border-black rounded-full" />
                       <div className="absolute -left-1 top-1 w-15 h-15 bg-white rounded-full z-0"/>
@@ -75,8 +90,11 @@ export function OrganizerComponent() {
                   </div>
                 </div>
               ))}
-              
           </section>
+          <span className="flex justify-end gap-5 pr-50 pt-5">
+            <Image src={left} alt="Left Arrow" className="w-12 h-12 p-3 hover:cursor-pointer bg-[#FFEFD3] rounded-full" onClick={scrollLeft}/>
+            <Image src={right} alt="Right Arrow" className="w-12 h-12 p-3 hover:cursor-pointer bg-[#FFEFD3] rounded-full" onClick={scrollRight}/>
+          </span>   
     </div>
   )
 }
