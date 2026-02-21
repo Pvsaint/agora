@@ -66,6 +66,19 @@ pub struct PaymentInfo {
     pub tiers: Map<String, TicketTier>,
 }
 
+/// Arguments required to register a new event
+#[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct EventRegistrationArgs {
+    pub event_id: String,
+    pub organizer_address: Address,
+    pub payment_address: Address,
+    pub metadata_cid: String,
+    pub max_supply: i128,
+    pub milestone_plan: Option<Vec<Milestone>>,
+    pub tiers: Map<String, TicketTier>,
+}
+
 /// Storage keys for the Event Registry contract.
 #[contracttype]
 pub enum DataKey {

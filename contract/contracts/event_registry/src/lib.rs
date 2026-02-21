@@ -4,8 +4,8 @@ use crate::events::{
     AgoraEvent, EventRegisteredEvent, EventStatusUpdatedEvent, FeeUpdatedEvent,
     InitializationEvent, InventoryIncrementedEvent, MetadataUpdatedEvent, RegistryUpgradedEvent,
 };
-use crate::types::{EventInfo, Milestone, PaymentInfo, TicketTier};
-use soroban_sdk::{contract, contractimpl, Address, BytesN, Env, Map, String, Vec};
+use crate::types::{EventInfo, EventRegistrationArgs, PaymentInfo};
+use soroban_sdk::{contract, contractimpl, Address, BytesN, Env, String, Vec};
 
 pub mod error;
 pub mod events;
@@ -74,36 +74,27 @@ impl EventRegistry {
     /// * `metadata_cid` - IPFS CID for event metadata
     /// * `max_supply` - Maximum number of tickets (0 = unlimited)
     /// * `tiers` - Map of tier_id to TicketTier for multi-tiered pricing
-    pub fn register_event(
-        env: Env,
-        event_id: String,
-        organizer_address: Address,
-        payment_address: Address,
-        metadata_cid: String,
-        max_supply: i128,
-        tiers: Map<String, TicketTier>,
-        milestone_plan: Option<Vec<Milestone>>,
-    ) -> Result<(), EventRegistryError> {
+    pub fn register_event(env: Env, args: EventRegistrationArgs) -> Result<(), EventRegistryError> {
         if !storage::is_initialized(&env) {
             return Err(EventRegistryError::NotInitialized);
         }
-        organizer_address.require_auth();
+        args.organizer_address.require_auth();
 
-        validate_metadata_cid(&env, &metadata_cid)?;
+        validate_metadata_cid(&env, &args.metadata_cid)?;
 
-        if storage::event_exists(&env, event_id.clone()) {
+        if storage::event_exists(&env, args.event_id.clone()) {
             return Err(EventRegistryError::EventAlreadyExists);
         }
 
         // Validate tier limits don't exceed max_supply
-        if max_supply > 0 {
+        if args.max_supply > 0 {
             let mut total_tier_limit: i128 = 0;
-            for tier in tiers.values() {
+            for tier in args.tiers.values() {
                 total_tier_limit = total_tier_limit
                     .checked_add(tier.tier_limit)
                     .ok_or(EventRegistryError::SupplyOverflow)?;
             }
-            if total_tier_limit > max_supply {
+            if total_tier_limit > args.max_supply {
                 return Err(EventRegistryError::TierLimitExceedsMaxSupply);
             }
         }
@@ -111,17 +102,17 @@ impl EventRegistry {
         let platform_fee_percent = storage::get_platform_fee(&env);
 
         let event_info = EventInfo {
-            event_id: event_id.clone(),
-            organizer_address: organizer_address.clone(),
-            payment_address: payment_address.clone(),
+            event_id: args.event_id.clone(),
+            organizer_address: args.organizer_address.clone(),
+            payment_address: args.payment_address.clone(),
             platform_fee_percent,
             is_active: true,
             created_at: env.ledger().timestamp(),
-            metadata_cid,
-            max_supply,
+            metadata_cid: args.metadata_cid.clone(),
+            max_supply: args.max_supply,
             current_supply: 0,
-            milestone_plan,
-            tiers,
+            milestone_plan: args.milestone_plan.clone(),
+            tiers: args.tiers.clone(),
         };
 
         storage::store_event(&env, event_info);
@@ -129,9 +120,9 @@ impl EventRegistry {
         env.events().publish(
             (AgoraEvent::EventRegistered,),
             EventRegisteredEvent {
-                event_id: event_id.clone(),
-                organizer_address: organizer_address.clone(),
-                payment_address: payment_address.clone(),
+                event_id: args.event_id.clone(),
+                organizer_address: args.organizer_address.clone(),
+                payment_address: args.payment_address.clone(),
                 timestamp: env.ledger().timestamp(),
             },
         );

@@ -17,24 +17,63 @@
               "function_name": "register_event",
               "args": [
                 {
-                  "string": "event_001"
-                },
-                {
-                  "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHK3M"
-                },
-                {
-                  "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAITA4"
-                },
-                {
-                  "string": "bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi"
-                },
-                {
-                  "i128": "100"
-                },
-                {
-                  "map": []
-                },
-                "void"
+                  "map": [
+                    {
+                      "key": {
+                        "symbol": "event_id"
+                      },
+                      "val": {
+                        "string": "event_001"
+                      }
+                    },
+                    {
+                      "key": {
+                        "symbol": "max_supply"
+                      },
+                      "val": {
+                        "i128": "100"
+                      }
+                    },
+                    {
+                      "key": {
+                        "symbol": "metadata_cid"
+                      },
+                      "val": {
+                        "string": "bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi"
+                      }
+                    },
+                    {
+                      "key": {
+                        "symbol": "milestone_plan"
+                      },
+                      "val": "void"
+                    },
+                    {
+                      "key": {
+                        "symbol": "organizer_address"
+                      },
+                      "val": {
+                        "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHK3M"
+                      }
+                    },
+                    {
+                      "key": {
+                        "symbol": "payment_address"
+                      },
+                      "val": {
+                        "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAITA4"
+                      }
+                    },
+                    {
+                      "key": {
+                        "symbol": "tiers"
+                      },
+                      "val": {
+                        "map": []
+                      }
+                    }
+                  ]
+                }
               ]
             }
           },

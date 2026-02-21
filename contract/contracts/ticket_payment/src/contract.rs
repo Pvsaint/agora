@@ -392,13 +392,13 @@ impl TicketPaymentContract {
         if let Some(milestones) = event_info.milestone_plan {
             let mut highest_met = 0u32;
             for milestone in milestones.iter() {
-                if event_info.current_supply >= milestone.sales_threshold {
-                    if milestone.release_percent > highest_met {
-                        highest_met = milestone.release_percent;
-                    }
+                if event_info.current_supply >= milestone.sales_threshold
+                    && milestone.release_percent > highest_met
+                {
+                    highest_met = milestone.release_percent;
                 }
             }
-            if milestones.len() > 0 {
+            if !milestones.is_empty() {
                 release_percent = highest_met;
             }
         }
