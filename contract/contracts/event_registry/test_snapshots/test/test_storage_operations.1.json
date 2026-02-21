@@ -149,6 +149,12 @@
                     },
                     {
                       "key": {
+                        "symbol": "milestone_plan"
+                      },
+                      "val": "void"
+                    },
+                    {
+                      "key": {
                         "symbol": "organizer_address"
                       },
                       "val": {

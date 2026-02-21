@@ -107,6 +107,12 @@
                     },
                     {
                       "key": {
+                        "symbol": "milestone_plan"
+                      },
+                      "val": "void"
+                    },
+                    {
+                      "key": {
                         "symbol": "organizer_address"
                       },
                       "val": {
@@ -230,6 +236,12 @@
                       "val": {
                         "string": "bafkreifh22222222222222222222222222222222222222222222222222"
                       }
+                    },
+                    {
+                      "key": {
+                        "symbol": "milestone_plan"
+                      },
+                      "val": "void"
                     },
                     {
                       "key": {

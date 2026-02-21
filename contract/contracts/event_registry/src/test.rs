@@ -129,6 +129,7 @@ fn test_storage_operations() {
         ),
         max_supply: 100,
         current_supply: 0,
+        milestone_plan: None,
         tiers,
     };
 
@@ -171,6 +172,7 @@ fn test_organizer_events_list() {
         ),
         max_supply: 50,
         current_supply: 0,
+        milestone_plan: None,
         tiers: tiers.clone(),
     };
 
@@ -187,6 +189,7 @@ fn test_organizer_events_list() {
         ),
         max_supply: 0,
         current_supply: 0,
+        milestone_plan: None,
         tiers,
     };
 
@@ -241,6 +244,7 @@ fn test_register_event_success() {
         &metadata_cid,
         &100,
         &tiers,
+        &None,
     );
 
     let payment_info = client.get_event_payment_info(&event_id);
@@ -280,6 +284,7 @@ fn test_register_event_unlimited_supply() {
         &metadata_cid,
         &0,
         &tiers,
+        &None,
     );
 
     let event_info = client.get_event(&event_id).unwrap();
@@ -314,6 +319,7 @@ fn test_register_duplicate_event_fails() {
         &metadata_cid,
         &100,
         &tiers,
+        &None,
     );
 
     let result = client.try_register_event(
@@ -323,6 +329,7 @@ fn test_register_duplicate_event_fails() {
         &metadata_cid,
         &100,
         &tiers,
+        &None,
     );
     assert_eq!(result, Err(Ok(EventRegistryError::EventAlreadyExists)));
 }
@@ -354,6 +361,7 @@ fn test_get_event_payment_info() {
         &metadata_cid,
         &50,
         &tiers,
+        &None,
     );
 
     let info = client.get_event_payment_info(&event_id);
@@ -388,6 +396,7 @@ fn test_update_event_status() {
         &metadata_cid,
         &100,
         &tiers,
+        &None,
     );
     client.update_event_status(&event_id, &false);
 
@@ -421,6 +430,7 @@ fn test_event_inactive_error() {
         &metadata_cid,
         &100,
         &tiers,
+        &None,
     );
     client.update_event_status(&event_id, &false);
 
@@ -455,6 +465,7 @@ fn test_complete_event_lifecycle() {
         &metadata_cid,
         &200,
         &tiers,
+        &None,
     );
 
     let payment_info = client.get_event_payment_info(&event_id);
@@ -501,6 +512,7 @@ fn test_update_metadata_success() {
         &metadata_cid,
         &100,
         &tiers,
+        &None,
     );
 
     let new_metadata_cid = String::from_str(
@@ -540,6 +552,7 @@ fn test_update_metadata_invalid_cid() {
         &metadata_cid,
         &100,
         &tiers,
+        &None,
     );
 
     let wrong_char_cid = String::from_str(
@@ -620,6 +633,7 @@ fn test_increment_inventory_success() {
         &metadata_cid,
         &10,
         &tiers,
+        &None,
     );
 
     client.increment_inventory(&event_id, &tier_id);
@@ -681,6 +695,7 @@ fn test_increment_inventory_max_supply_exceeded() {
         &metadata_cid,
         &2,
         &tiers,
+        &None,
     );
 
     client.increment_inventory(&event_id, &tier_id);
@@ -737,6 +752,7 @@ fn test_increment_inventory_unlimited_supply() {
         &metadata_cid,
         &0,
         &tiers,
+        &None,
     );
 
     for _ in 0..10 {
@@ -810,6 +826,7 @@ fn test_increment_inventory_inactive_event() {
         &metadata_cid,
         &100,
         &tiers,
+        &None,
     );
 
     client.update_event_status(&event_id, &false);
@@ -859,6 +876,7 @@ fn test_increment_inventory_persists_across_reads() {
         &metadata_cid,
         &50,
         &tiers,
+        &None,
     );
 
     for _ in 0..5 {
@@ -924,6 +942,7 @@ fn test_tier_limit_exceeds_max_supply() {
         &metadata_cid,
         &100,
         &tiers,
+        &None,
     );
     assert_eq!(
         result,
@@ -973,6 +992,7 @@ fn test_tier_not_found() {
         &metadata_cid,
         &100,
         &tiers,
+        &None,
     );
 
     let wrong_tier_id = String::from_str(&env, "nonexistent");
@@ -1023,6 +1043,7 @@ fn test_tier_supply_exceeded() {
         &metadata_cid,
         &100,
         &tiers,
+        &None,
     );
 
     client.increment_inventory(&event_id, &tier_id);
@@ -1088,6 +1109,7 @@ fn test_multiple_tiers_inventory() {
         &metadata_cid,
         &70,
         &tiers,
+        &None,
     );
 
     client.increment_inventory(&event_id, &general_id);

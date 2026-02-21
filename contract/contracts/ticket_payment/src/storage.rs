@@ -141,6 +141,7 @@ pub fn get_event_balance(env: &Env, event_id: String) -> EventBalance {
         .get(&DataKey::Balances(event_id))
         .unwrap_or(EventBalance {
             organizer_amount: 0,
+            total_withdrawn: 0,
             platform_fee: 0,
         })
 }

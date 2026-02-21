@@ -52,6 +52,13 @@ pub mod event_registry {
 
     #[soroban_sdk::contracttype]
     #[derive(Clone, Debug, Eq, PartialEq)]
+    pub struct Milestone {
+        pub sales_threshold: i128,
+        pub release_percent: u32,
+    }
+
+    #[soroban_sdk::contracttype]
+    #[derive(Clone, Debug, Eq, PartialEq)]
     pub struct EventInfo {
         pub event_id: String,
         pub organizer_address: Address,
@@ -62,6 +69,7 @@ pub mod event_registry {
         pub metadata_cid: String,
         pub max_supply: i128,
         pub current_supply: i128,
+        pub milestone_plan: Option<soroban_sdk::Vec<Milestone>>,
         pub tiers: soroban_sdk::Map<String, TicketTier>,
     }
 }
@@ -375,26 +383,54 @@ impl TicketPaymentContract {
         event_info.organizer_address.require_auth();
 
         let balance = get_event_balance(&env, event_id.clone());
-        if balance.organizer_amount == 0 {
+        let total_revenue = balance.organizer_amount + balance.total_withdrawn;
+        if total_revenue == 0 {
             return Ok(0);
+        }
+
+        let mut release_percent = 10000u32;
+        if let Some(milestones) = event_info.milestone_plan {
+            let mut highest_met = 0u32;
+            for milestone in milestones.iter() {
+                if event_info.current_supply >= milestone.sales_threshold {
+                    if milestone.release_percent > highest_met {
+                        highest_met = milestone.release_percent;
+                    }
+                }
+            }
+            if milestones.len() > 0 {
+                release_percent = highest_met;
+            }
+        }
+
+        let max_allowed = (total_revenue * release_percent as i128) / 10000;
+        let mut available_to_withdraw = max_allowed - balance.total_withdrawn;
+
+        if available_to_withdraw <= 0 {
+            return Ok(0);
+        }
+
+        if available_to_withdraw > balance.organizer_amount {
+            available_to_withdraw = balance.organizer_amount;
         }
 
         token::Client::new(&env, &token_address).transfer(
             &env.current_contract_address(),
             &event_info.organizer_address,
-            &balance.organizer_amount,
+            &available_to_withdraw,
         );
 
         crate::storage::set_event_balance(
             &env,
             event_id,
             crate::types::EventBalance {
-                organizer_amount: 0,
+                organizer_amount: balance.organizer_amount - available_to_withdraw,
+                total_withdrawn: balance.total_withdrawn + available_to_withdraw,
                 platform_fee: balance.platform_fee,
             },
         );
 
-        Ok(balance.organizer_amount)
+        Ok(available_to_withdraw)
     }
 
     /// Withdraw platform fees from escrow.
@@ -423,6 +459,7 @@ impl TicketPaymentContract {
             event_id,
             crate::types::EventBalance {
                 organizer_amount: balance.organizer_amount,
+                total_withdrawn: balance.total_withdrawn,
                 platform_fee: 0,
             },
         );

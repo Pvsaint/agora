@@ -29,6 +29,7 @@ pub struct Payment {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct EventBalance {
     pub organizer_amount: i128,
+    pub total_withdrawn: i128,
     pub platform_fee: i128,
 }
 

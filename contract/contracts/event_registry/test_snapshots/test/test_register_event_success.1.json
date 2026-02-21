@@ -49,6 +49,14 @@
                           },
                           {
                             "key": {
+                              "symbol": "is_refundable"
+                            },
+                            "val": {
+                              "bool": true
+                            }
+                          },
+                          {
+                            "key": {
                               "symbol": "name"
                             },
                             "val": {
@@ -75,7 +83,8 @@
                       }
                     }
                   ]
-                }
+                },
+                "void"
               ]
             }
           },
@@ -222,6 +231,12 @@
                     },
                     {
                       "key": {
+                        "symbol": "milestone_plan"
+                      },
+                      "val": "void"
+                    },
+                    {
+                      "key": {
                         "symbol": "organizer_address"
                       },
                       "val": {
@@ -262,6 +277,14 @@
                                   },
                                   "val": {
                                     "i128": "0"
+                                  }
+                                },
+                                {
+                                  "key": {
+                                    "symbol": "is_refundable"
+                                  },
+                                  "val": {
+                                    "bool": true
                                   }
                                 },
                                 {

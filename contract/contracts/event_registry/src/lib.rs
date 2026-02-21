@@ -4,7 +4,7 @@ use crate::events::{
     AgoraEvent, EventRegisteredEvent, EventStatusUpdatedEvent, FeeUpdatedEvent,
     InitializationEvent, InventoryIncrementedEvent, MetadataUpdatedEvent, RegistryUpgradedEvent,
 };
-use crate::types::{EventInfo, PaymentInfo, TicketTier};
+use crate::types::{EventInfo, Milestone, PaymentInfo, TicketTier};
 use soroban_sdk::{contract, contractimpl, Address, BytesN, Env, Map, String, Vec};
 
 pub mod error;
@@ -82,6 +82,7 @@ impl EventRegistry {
         metadata_cid: String,
         max_supply: i128,
         tiers: Map<String, TicketTier>,
+        milestone_plan: Option<Vec<Milestone>>,
     ) -> Result<(), EventRegistryError> {
         if !storage::is_initialized(&env) {
             return Err(EventRegistryError::NotInitialized);
@@ -119,6 +120,7 @@ impl EventRegistry {
             metadata_cid,
             max_supply,
             current_supply: 0,
+            milestone_plan,
             tiers,
         };
 
